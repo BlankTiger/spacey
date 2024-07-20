@@ -29,9 +29,8 @@ class Game:
         pygame.quit()
 
     def draw(self):
-        self.screen.fill("purple")
-        rect = pygame.Rect(30, 30, 60, 60)
-        pygame.draw.rect(self.screen, "blue", rect)
+        self.screen.fill("gray")
+        pygame.draw.rect(self.screen, "blue", self.rect)
         pygame.display.flip()
 
     def handle_events(self):
@@ -43,3 +42,13 @@ class Game:
         pressed_keys = pygame.key.get_pressed()
         if pressed_keys[pygame.K_F11]:
             pygame.display.toggle_fullscreen()
+        if pressed_keys[pygame.K_ESCAPE]:
+            self.running = False
+        if pressed_keys[pygame.K_LEFT]:
+            self.rect.move_ip(-10, 0)
+        if pressed_keys[pygame.K_RIGHT]:
+            self.rect.move_ip(10, 0)
+        if pressed_keys[pygame.K_UP]:
+            self.rect.move_ip(0, -10)
+        if pressed_keys[pygame.K_DOWN]:
+            self.rect.move_ip(0, 10)
