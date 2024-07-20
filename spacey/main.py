@@ -16,14 +16,19 @@ class Player:
         self.rect = pygame.Rect(50, 500, 60, 60)
         self.screen = screen
         self.projectiles = []
+        self.cooldown = 180
+        self.last = pygame.time.get_ticks()
 
     def get_position(self):
         return [self.rect.x, self.rect.y]
 
     def shoot(self):
-        x, y = self.get_position()
-        rect = pygame.Rect(x, y, 10, 10)
-        self.projectiles.append(rect)
+        now = pygame.time.get_ticks()
+        if now - self.last > self.cooldown:
+            self.last = now
+            x, y = self.get_position()
+            rect = pygame.Rect(x, y, 10, 10)
+            self.projectiles.append(rect)
 
     def draw(self):
         pygame.draw.rect(self.screen, "blue", self.rect)
