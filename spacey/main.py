@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import random
+
 import pygame
 
 from .enemy import Enemy
@@ -21,7 +23,17 @@ class Game:
         self.running = True
         self.dt = 0.0
         self.player = Player(self.screen)
-        self.enemies = [Enemy(self.screen)]
+        self.enemies = []
+        self.create_enemies(5)
+
+    def create_enemies(self, amount):
+        x_range = [1500, 1900]
+        y_range = [0, 1080]
+        for _ in range(amount):
+            x = random.randint(x_range[0], x_range[1])
+            y = random.randint(y_range[0], y_range[1])
+            enemy = Enemy(x, y, self.screen)
+            self.enemies.append(enemy)
 
     def game_loop(self):
         while self.running:

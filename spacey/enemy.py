@@ -7,9 +7,7 @@ from .hitbox import Hitbox
 
 
 class Enemy:
-    def __init__(self, screen) -> None:
-        x = 1500
-        y = 500
+    def __init__(self, x, y, screen) -> None:
         width = 60
         height = 60
         self.rect = pygame.Rect(x, y, width, height)
