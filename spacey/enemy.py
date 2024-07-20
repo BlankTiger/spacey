@@ -1,16 +1,26 @@
-import pygame
 import random
+
+import pygame
+
 from .bullet import Bullet, Direction
+from .hitbox import Hitbox
 
 
 class Enemy:
     def __init__(self, screen) -> None:
-        self.rect = pygame.Rect(1500, 500, 60, 60)
+        x = 1500
+        y = 500
+        width = 60
+        height = 60
+        self.rect = pygame.Rect(x, y, width, height)
+        self.hitbox = Hitbox(x, y, width, height)
         self.screen = screen
         self.cooldown = 1000
         self.last = pygame.time.get_ticks()
         self.last_bullet = pygame.time.get_ticks()
         self.bullets = []
+        self.dead = False
+        self.died_at = 0
 
     def get_position(self):
         return [self.rect.x, self.rect.y]
@@ -23,11 +33,16 @@ class Enemy:
             self.last = now
             self.move(random_x, random_y)
         self.shoot()
-        pygame.draw.rect(self.screen, "red", self.rect)
+        pygame.draw.rect(self.screen, self.get_color(), self.rect)
         for bullet in self.bullets:
             bullet.draw()
             if bullet.get_position()[0] < 0:
                 self.bullets.remove(bullet)
+
+    def get_color(self):
+        if self.dead:
+            return "black"
+        return "red"
 
     def shoot(self):
         now = pygame.time.get_ticks()
@@ -48,3 +63,10 @@ class Enemy:
         if y + y_offset > 1080 - self.rect.height:
             return
         self.rect.move_ip(x_offset, y_offset)
+
+    def die_if_shot(self, bullets):
+        for bullet in bullets:
+            if self.hitbox.overlaps(bullet.hitbox):
+                print("Enemy hit!")
+                self.dead = True
+                self.died_at = pygame.time.get_ticks()

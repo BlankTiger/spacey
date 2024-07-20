@@ -1,5 +1,8 @@
-import pygame
 from enum import Enum
+
+import pygame
+
+from .hitbox import Hitbox
 
 
 class Direction(Enum):
@@ -10,6 +13,9 @@ class Direction(Enum):
 class Bullet:
     def __init__(self, x, y, direction, screen):
         self.screen = screen
+        width = 10
+        height = 10
+        self.hitbox = Hitbox(x, y, width, height)
         self.rect = pygame.Rect(x, y, 10, 10)
         self.direction = direction
         self.x = 0
@@ -21,6 +27,7 @@ class Bullet:
     def draw(self):
         pygame.draw.rect(self.screen, "black", self.rect)
         self.rect.move_ip(self.x, 0)
+        self.hitbox.update_pos(10, 0)
 
     def get_position(self):
         return [self.rect.x, self.rect.y]
