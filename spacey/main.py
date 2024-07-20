@@ -16,6 +16,7 @@ class Game:
         self.screen = screen
         self.clock = clock
         self.running = True
+        self.rect = pygame.Rect(30, 30, 60, 60)
         self.dt = 0.0
 
     def game_loop(self):
@@ -29,7 +30,6 @@ class Game:
 
     def draw(self):
         self.screen.fill("purple")
-        pygame.display.flip()
         rect = pygame.Rect(30, 30, 60, 60)
         pygame.draw.rect(self.screen, "blue", rect)
         pygame.display.flip()
