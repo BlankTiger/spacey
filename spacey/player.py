@@ -29,15 +29,27 @@ class Player:
             if bullet.get_position()[0] > 1920:
                 self.bullets.remove(bullet)
 
+    def move(self, x_offset, y_offset):
+        x, y = self.get_position()
+        if x + x_offset < 0:
+            return
+        if x + x_offset > 1920 - self.rect.width:
+            return
+        if y + y_offset < 0:
+            return
+        if y + y_offset > 1080 - self.rect.height:
+            return
+        self.rect.move_ip(x_offset, y_offset)
+
     def handle_actions(self):
         pressed_keys = pygame.key.get_pressed()
         if pressed_keys[pygame.K_LEFT]:
-            self.rect.move_ip(-10, 0)
+            self.move(-10, 0)
         if pressed_keys[pygame.K_RIGHT]:
-            self.rect.move_ip(10, 0)
+            self.move(10, 0)
         if pressed_keys[pygame.K_UP]:
-            self.rect.move_ip(0, -10)
+            self.move(0, -10)
         if pressed_keys[pygame.K_DOWN]:
-            self.rect.move_ip(0, 10)
+            self.move(0, 10)
         if pressed_keys[pygame.K_SPACE]:
             self.shoot()
