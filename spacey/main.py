@@ -4,7 +4,10 @@ import pygame
 
 
 def main() -> None:
-    game = Game.init()
+    pygame.init()
+    screen = pygame.display.set_mode((800, 600))
+    clock = pygame.time.Clock()
+    game = Game(screen, clock)
     game.game_loop()
 
 
@@ -14,13 +17,6 @@ class Game:
         self.clock = clock
         self.running = True
         self.dt = 0.0
-
-    @classmethod
-    def init(cls) -> Game:
-        pygame.init()
-        screen = pygame.display.set_mode((800, 600))
-        clock = pygame.time.Clock()
-        return cls(screen, clock)
 
     def game_loop(self) -> None:
         while self.running:
