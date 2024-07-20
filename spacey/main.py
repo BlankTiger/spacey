@@ -50,6 +50,15 @@ class Player:
             self.shoot()
 
 
+class Enemy:
+    def __init__(self, screen) -> None:
+        self.rect = pygame.Rect(1500, 500, 60, 60)
+        self.screen = screen
+
+    def draw(self):
+        pygame.draw.rect(self.screen, "red", self.rect)
+
+
 class Game:
     def __init__(self, screen, clock):
         self.screen = screen
@@ -57,6 +66,7 @@ class Game:
         self.running = True
         self.dt = 0.0
         self.player = Player(self.screen)
+        self.enemy = Enemy(self.screen)
 
     def game_loop(self):
         while self.running:
@@ -71,6 +81,7 @@ class Game:
     def draw(self):
         self.screen.fill("gray")
         self.player.draw()
+        self.enemy.draw()
         pygame.display.flip()
 
     def handle_events(self):
