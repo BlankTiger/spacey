@@ -11,18 +11,35 @@ def main():
     game.game_loop()
 
 
+class Player:
+    def __init__(self) -> None:
+        self.rect = pygame.Rect(30, 30, 60, 60)
+
+    def handle_movement(self):
+        pressed_keys = pygame.key.get_pressed()
+        if pressed_keys[pygame.K_LEFT]:
+            self.rect.move_ip(-10, 0)
+        if pressed_keys[pygame.K_RIGHT]:
+            self.rect.move_ip(10, 0)
+        if pressed_keys[pygame.K_UP]:
+            self.rect.move_ip(0, -10)
+        if pressed_keys[pygame.K_DOWN]:
+            self.rect.move_ip(0, 10)
+
+
 class Game:
     def __init__(self, screen, clock):
         self.screen = screen
         self.clock = clock
         self.running = True
-        self.rect = pygame.Rect(30, 30, 60, 60)
         self.dt = 0.0
+        self.player = Player()
 
     def game_loop(self):
         while self.running:
             self.handle_events()
             self.handle_clicks()
+            self.player.handle_movement()
             self.draw()
             self.dt = self.clock.tick(60) / 1000
 
@@ -30,7 +47,7 @@ class Game:
 
     def draw(self):
         self.screen.fill("gray")
-        pygame.draw.rect(self.screen, "blue", self.rect)
+        pygame.draw.rect(self.screen, "blue", self.player.rect)
         pygame.display.flip()
 
     def handle_events(self):
@@ -44,11 +61,3 @@ class Game:
             pygame.display.toggle_fullscreen()
         if pressed_keys[pygame.K_ESCAPE]:
             self.running = False
-        if pressed_keys[pygame.K_LEFT]:
-            self.rect.move_ip(-10, 0)
-        if pressed_keys[pygame.K_RIGHT]:
-            self.rect.move_ip(10, 0)
-        if pressed_keys[pygame.K_UP]:
-            self.rect.move_ip(0, -10)
-        if pressed_keys[pygame.K_DOWN]:
-            self.rect.move_ip(0, 10)
