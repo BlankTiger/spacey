@@ -5,7 +5,7 @@ import pygame
 
 def main():
     pygame.init()
-    screen = pygame.display.set_mode((800, 600))
+    screen = pygame.display.set_mode((1920, 1080))
     clock = pygame.time.Clock()
     game = Game(screen, clock)
     game.game_loop()
@@ -22,11 +22,17 @@ class Game:
         while self.running:
             self.handle_events()
             self.handle_clicks()
-            self.screen.fill("purple")
-            pygame.display.flip()
+            self.draw()
             self.dt = self.clock.tick(60) / 1000
 
         pygame.quit()
+
+    def draw(self):
+        self.screen.fill("purple")
+        pygame.display.flip()
+        rect = pygame.Rect(30, 30, 60, 60)
+        pygame.draw.rect(self.screen, "blue", rect)
+        pygame.display.flip()
 
     def handle_events(self):
         for event in pygame.event.get():
