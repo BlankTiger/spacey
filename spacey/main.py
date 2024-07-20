@@ -3,7 +3,7 @@ from __future__ import annotations
 import pygame
 
 
-def main() -> None:
+def main():
     pygame.init()
     screen = pygame.display.set_mode((800, 600))
     clock = pygame.time.Clock()
@@ -12,13 +12,13 @@ def main() -> None:
 
 
 class Game:
-    def __init__(self, screen: pygame.Surface, clock: pygame.time.Clock) -> None:
+    def __init__(self, screen, clock):
         self.screen = screen
         self.clock = clock
         self.running = True
         self.dt = 0.0
 
-    def game_loop(self) -> None:
+    def game_loop(self):
         while self.running:
             self.handle_events()
             self.handle_clicks()
@@ -28,12 +28,12 @@ class Game:
 
         pygame.quit()
 
-    def handle_events(self) -> None:
+    def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
 
-    def handle_clicks(self) -> None:
+    def handle_clicks(self):
         pressed_keys = pygame.key.get_pressed()
         if pressed_keys[pygame.K_F11]:
             pygame.display.toggle_fullscreen()
