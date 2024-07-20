@@ -1,6 +1,6 @@
 import pygame
 
-from .bullet import Bullet
+from .bullet import Bullet, Direction
 
 
 class Player:
@@ -19,7 +19,7 @@ class Player:
         if now - self.last > self.cooldown:
             self.last = now
             x, y = self.get_position()
-            bullet = Bullet(x, y, self.screen)
+            bullet = Bullet(x, y, Direction.Right, self.screen)
             self.bullets.append(bullet)
 
     def draw(self):
