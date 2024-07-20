@@ -63,6 +63,7 @@ class Enemy:
         if y + y_offset > 1080 - self.rect.height:
             return
         self.rect.move_ip(x_offset, y_offset)
+        self.hitbox.update_pos(x_offset, y_offset)
 
     def die_if_shot(self, bullets):
         for bullet in bullets:

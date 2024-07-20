@@ -27,7 +27,7 @@ class Bullet:
     def draw(self):
         pygame.draw.rect(self.screen, "black", self.rect)
         self.rect.move_ip(self.x, 0)
-        self.hitbox.update_pos(10, 0)
+        self.hitbox.update_pos(self.x, 0)
 
     def get_position(self):
         return [self.rect.x, self.rect.y]
