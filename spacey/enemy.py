@@ -19,6 +19,7 @@ class Enemy:
         self.bullets: list[Bullet] = []
         self.dead = False
         self.died_at = 0
+        self.sound()
 
     def update(self):
         random_x = random.randint(-50, 50)
@@ -67,6 +68,14 @@ class Enemy:
         self.rect.move_ip(x_offset, y_offset)
         self.hitbox.update_pos(x_offset, y_offset)
 
+    def sound(self):
+        pygame.mixer.pre_init()
+        pygame.mixer.init()
+        self.death_sound = pygame.mixer.Sound("sounds/kill.mp3")
+        self.damage_sound = pygame.mixer.Sound("sounds/take_damage.mp3")
+        pygame.mixer.Sound.set_volume(self.death_sound, 0.2)
+        pygame.mixer.Sound.set_volume(self.damage_sound, 0.2)
+
     def die_if_shot(self, bullets):
         if self.dead:
             return
@@ -74,5 +83,6 @@ class Enemy:
         for bullet in bullets:
             if self.hitbox.overlaps(bullet.hitbox):
                 print("Enemy hit!")
+                pygame.mixer.Sound.play(self.damage_sound)
                 self.dead = True
                 self.died_at = pygame.time.get_ticks()

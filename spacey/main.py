@@ -76,5 +76,8 @@ class Game:
             if enemy.dead and pygame.time.get_ticks() - enemy.died_at > 1000:
                 self.enemies.remove(enemy)
             self.player.die_if_shot(enemy.bullets)
-            if self.player.dead and pygame.time.get_ticks() - self.player.died_at > 1000:
+            if (
+                self.player.dead
+                and pygame.time.get_ticks() - self.player.died_at > 1000
+            ):
                 self.player.die()
