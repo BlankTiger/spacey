@@ -5,6 +5,33 @@ from spacey.hitbox import Hitbox
 from spacey.position import Position
 
 
+class Health:
+    def __init__(self, screen):
+        self.health = 100
+        self.screen = screen
+        self.rect = pygame.rect.Rect(100, 70, self.get_health_width(), 40)
+        self.outline = self.rect.copy()
+        self.outline.x -= 5
+        self.outline.y -= 5
+        self.outline.width = 1.01 * self.rect.width
+        self.outline.height = 1.2 * self.rect.height
+
+    def get_health_width(self):
+        return self.health * 9
+
+    def draw(self):
+        pygame.draw.rect(self.screen, (255, 0, 0), self.rect)
+        pygame.draw.rect(self.screen, (255, 0, 0), self.outline, 2)
+
+    def update(self):
+        self.rect.width = self.get_health_width()
+        if self.health <= 0:
+            self.health = 0
+
+    def shot(self):
+        self.health -= 10
+
+
 class Player(pygame.sprite.Sprite):
     def __init__(self, screen) -> None:
         super()
@@ -24,6 +51,8 @@ class Player(pygame.sprite.Sprite):
         self.dead = False
         self.sound()
         self.sound_played = False
+        self.health = Health(self.screen)
+        self.shot_by = set()
 
     def pos_for_hitbox(self):
         return self.pos.x + 30, self.pos.y + 35
@@ -43,6 +72,7 @@ class Player(pygame.sprite.Sprite):
 
     def update(self):
         self.handle_actions()
+        self.health.update()
         for bullet in self.bullets:
             bullet.update()
             if bullet.pos.x > 1920:
@@ -52,6 +82,7 @@ class Player(pygame.sprite.Sprite):
         self.screen.blit(self.image, (self.pos.x, self.pos.y))
         for bullet in self.bullets:
             bullet.draw()
+        self.health.draw()
 
     def move(self, x_offset, y_offset):
         if self.pos.x + x_offset < 0:
@@ -83,21 +114,24 @@ class Player(pygame.sprite.Sprite):
         if not self.sound_played:
             pygame.mixer.Sound.play(self.death_sound)
             self.sound_played = True
+            pygame.mixer.music.stop()
 
-    def stop(self):
-        pygame.mixer.music.stop()
+    def getting_shot_sfx(self): ...
 
-    def die_if_shot(self, bullets):
-        if self.dead:
+    def get_shot(self, bullets):
+        if self.health.health <= 0:
+            print("You died")
+            self.dead = True
+            self.died_at = pygame.time.get_ticks()
             self.death_sfx()
-            self.stop()
             return
 
         for bullet in bullets:
-            if self.hitbox.overlaps(bullet.hitbox):
-                print("You Died")
-                self.dead = True
-                self.died_at = pygame.time.get_ticks()
+            if self.hitbox.overlaps(bullet.hitbox) and bullet not in self.shot_by:
+                print("You got shot")
+                self.health.shot()
+                self.shot_by.add(bullet)
+                self.getting_shot_sfx()
 
     def handle_actions(self):
         pressed_keys = pygame.key.get_pressed()
@@ -116,6 +150,3 @@ class Player(pygame.sprite.Sprite):
         if self.dead:
             return "black"
         return "blue"
-
-    def die(self):
-        print("BETON")
