@@ -71,9 +71,9 @@ class Player(pygame.sprite.Sprite):
     def sound(self):
         pygame.mixer.pre_init()
         pygame.mixer.init()
-        self.death_sound = pygame.mixer.Sound("sounds/death.mp3")
+        self.death_sound = pygame.mixer.Sound("sounds/death2.mp3")
         self.shoot_sound = pygame.mixer.Sound("sounds/bullet.mp3")
-        pygame.mixer.Sound.set_volume(self.death_sound, 0.5)
+        pygame.mixer.Sound.set_volume(self.death_sound, 0.3)
         pygame.mixer.Sound.set_volume(self.shoot_sound, 0.1)
         pygame.mixer.music.load("sounds/song2.mp3")
         pygame.mixer.music.play(-1)

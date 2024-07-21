@@ -53,6 +53,7 @@ class Enemy:
             self.last_bullet = now
             bullet = Bullet(self.pos.x, self.pos.y, Direction.Left, self.screen)
             self.bullets.append(bullet)
+            pygame.mixer.Sound.play(self.shoot_sound)
 
     def move(self, x_offset, y_offset):
         if self.pos.x + x_offset < 0:
@@ -73,6 +74,8 @@ class Enemy:
         pygame.mixer.init()
         self.death_sound = pygame.mixer.Sound("sounds/kill.mp3")
         self.damage_sound = pygame.mixer.Sound("sounds/take_damage.mp3")
+        self.shoot_sound = pygame.mixer.Sound("sounds/shoot2.mp3")
+        pygame.mixer.Sound.set_volume(self.shoot_sound, 0.035)
         pygame.mixer.Sound.set_volume(self.death_sound, 0.2)
         pygame.mixer.Sound.set_volume(self.damage_sound, 0.2)
 
