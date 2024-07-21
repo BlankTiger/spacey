@@ -47,6 +47,8 @@ class Game:
         self.handle_events()
         self.handle_clicks()
         self.player.update()
+        for enemy in self.enemies:
+            enemy.update()
         self.handle_shots()
 
     def draw(self):

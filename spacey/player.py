@@ -13,7 +13,7 @@ class Player:
         self.rect = pygame.Rect(x, y, width, height)
         self.hitbox = Hitbox(x, y, width, height)
         self.screen = screen
-        self.bullets = []
+        self.bullets: list[Bullet] = []
         self.cooldown = 180
         self.last = pygame.time.get_ticks()
         self.dead = False
@@ -32,6 +32,7 @@ class Player:
     def update(self):
         self.handle_actions()
         for bullet in self.bullets:
+            bullet.update()
             if bullet.get_position()[0] > 1920:
                 self.bullets.remove(bullet)
 
