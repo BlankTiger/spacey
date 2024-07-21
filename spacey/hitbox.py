@@ -4,13 +4,14 @@ from spacey.position import Position
 
 
 class Hitbox:
-    def __init__(self, pos: Position, width, height):
-        self.pos = pos
+    def __init__(self, x, y, width, height):
+        self.pos = Position(x, y)
         self.width = width
         self.height = height
 
-    def update_pos(self, pos: Position):
-        self.pos = pos
+    def update_pos(self, x, y):
+        self.pos.x = x
+        self.pos.y = y
 
     def draw(self, screen):
         pygame.draw.rect(screen, "green", (self.pos.x, self.pos.y, self.width, self.height))

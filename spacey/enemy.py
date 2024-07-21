@@ -14,7 +14,7 @@ class Enemy:
         height = 60
         self.pos = Position(x, y)
         self.rect = pygame.Rect(x, y, width, height)
-        self.hitbox = Hitbox(self.pos, width, height)
+        self.hitbox = Hitbox(self.pos.x, self.pos.y, width, height)
         self.screen = screen
         self.cooldown = 1000
         self.last = pygame.time.get_ticks()
@@ -66,7 +66,7 @@ class Enemy:
         self.rect.move_ip(x_offset, y_offset)
         self.pos.x += x_offset
         self.pos.y += y_offset
-        self.hitbox.update_pos(self.pos)
+        self.hitbox.update_pos(self.pos.x, self.pos.y)
 
     def sound(self):
         pygame.mixer.pre_init()

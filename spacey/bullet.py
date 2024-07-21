@@ -54,11 +54,11 @@ class Bullet(pygame.sprite.Sprite):
             self.hitbox_offset_y = -20
         self.curr_img = 0
         self.image = self.images[self.curr_img]
-        self.hitbox = Hitbox(self.pos, 30, 30)
+        self.hitbox = Hitbox(self.pos.x, self.pos.y, 30, 30)
 
     def update(self):
         self.pos.x += self.x_change
-        self.hitbox.update_pos(self.pos)
+        self.hitbox.update_pos(self.pos.x, self.pos.y)
         self.curr_img += 0.1
         if self.curr_img >= len(self.images):
             self.curr_img = 0

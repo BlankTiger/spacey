@@ -15,7 +15,8 @@ class Player(pygame.sprite.Sprite):
         width = self.image.get_width()
         height = self.image.get_height()
         self.rect = pygame.Rect(self.pos.x, self.pos.y, width, height)
-        self.hitbox = Hitbox(self.pos, width / 1.3, height / 1.3)
+        pos = self.pos_for_hitbox()
+        self.hitbox = Hitbox(pos[0], pos[1], width / 2, height / 2)
         self.screen = screen
         self.bullets: list[Bullet] = []
         self.cooldown = 180
@@ -23,6 +24,9 @@ class Player(pygame.sprite.Sprite):
         self.dead = False
         self.sound()
         self.sound_played = False
+
+    def pos_for_hitbox(self):
+        return self.pos.x + 30, self.pos.y + 35
 
     def load_full_health(self, width, height):
         self.image = pygame.image.load("images/ship/ship_full_health.png")
@@ -61,7 +65,8 @@ class Player(pygame.sprite.Sprite):
         self.rect.move_ip(x_offset, y_offset)
         self.pos.x += x_offset
         self.pos.y += y_offset
-        self.hitbox.update_pos(self.pos)
+        pos = self.pos_for_hitbox()
+        self.hitbox.update_pos(pos[0], pos[1])
 
     def sound(self):
         pygame.mixer.pre_init()
@@ -72,7 +77,7 @@ class Player(pygame.sprite.Sprite):
         pygame.mixer.Sound.set_volume(self.shoot_sound, 0.1)
         pygame.mixer.music.load("sounds/song2.mp3")
         pygame.mixer.music.play(-1)
-        pygame.mixer.music.set_volume(0.05)
+        pygame.mixer.music.set_volume(0.15)
 
     def death_sfx(self):
         if not self.sound_played:
