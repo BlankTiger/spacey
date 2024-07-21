@@ -39,18 +39,18 @@ class Bullet(pygame.sprite.Sprite):
         self.pos = Position(x, y)
         self.screen = screen
         width = 32 * 2
-        height = 64 * 2
+        height = 180 * 2
         images = BulletImages(width, height)
         self.direction = direction
         if self.direction == Direction.Right:
             self.images = images.images_right
             self.x_change = 10
-            self.hitbox_offset_x = -100
+            self.hitbox_offset_x = -310
             self.hitbox_offset_y = -20
         elif self.direction == Direction.Left:
             self.images = images.images_left
             self.x_change = -10
-            self.hitbox_offset_x = 0
+            self.hitbox_offset_x = -20
             self.hitbox_offset_y = -20
         self.curr_img = 0
         self.image = self.images[self.curr_img]
@@ -65,6 +65,7 @@ class Bullet(pygame.sprite.Sprite):
         self.image = self.images[int(self.curr_img)]
 
     def draw(self):
+        self.hitbox.draw(self.screen)
         self.screen.blit(
             self.image, (self.pos.x + self.hitbox_offset_x, self.pos.y + self.hitbox_offset_y)
         )

@@ -8,13 +8,14 @@ from .bullet import Bullet, Direction
 from .hitbox import Hitbox
 
 
-class Enemy:
+class Enemy(pygame.sprite.Sprite):
     def __init__(self, x, y, screen) -> None:
         width = 60
         height = 60
         self.pos = Position(x, y)
         self.rect = pygame.Rect(x, y, width, height)
-        self.hitbox = Hitbox(self.pos.x, self.pos.y, width, height)
+        pos = self.pos_for_hitbox()
+        self.hitbox = Hitbox(pos.x, pos.y, width, height)
         self.screen = screen
         self.cooldown = 1000
         self.last = pygame.time.get_ticks()
@@ -23,6 +24,9 @@ class Enemy:
         self.dead = False
         self.died_at = 0
         self.sound()
+        self.image = pygame.image.load("images/enemies/fighter.png")
+        self.image = pygame.transform.scale_by(self.image, 3)
+        self.image = pygame.transform.rotate(self.image, 90)
 
     def update(self):
         random_x = random.randint(-50, 50)
@@ -38,7 +42,7 @@ class Enemy:
                 self.bullets.remove(bullet)
 
     def draw(self):
-        pygame.draw.rect(self.screen, self.get_color(), self.rect)
+        self.screen.blit(self.image, (self.pos.x, self.pos.y))
         for bullet in self.bullets:
             bullet.draw()
 
@@ -67,7 +71,11 @@ class Enemy:
         self.rect.move_ip(x_offset, y_offset)
         self.pos.x += x_offset
         self.pos.y += y_offset
-        self.hitbox.update_pos(self.pos.x, self.pos.y)
+        pos = self.pos_for_hitbox()
+        self.hitbox.update_pos(pos.x, pos.y)
+
+    def pos_for_hitbox(self):
+        return Position(self.pos.x + 65, self.pos.y + 64)
 
     def sound(self):
         pygame.mixer.pre_init()

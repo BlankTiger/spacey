@@ -56,7 +56,7 @@ class Game:
         for enemy in self.enemies:
             enemy.update()
         self.handle_shots()
-        self.scroll -= 5
+        self.scroll -= 10
         if abs(self.scroll) >= self.bg.get_width():
             self.scroll = 0
 
