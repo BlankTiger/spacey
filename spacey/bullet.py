@@ -65,7 +65,6 @@ class Bullet(pygame.sprite.Sprite):
         self.image = self.images[int(self.curr_img)]
 
     def draw(self):
-        self.hitbox.draw(self.screen)
         self.screen.blit(
             self.image, (self.pos.x + self.hitbox_offset_x, self.pos.y + self.hitbox_offset_y)
         )
