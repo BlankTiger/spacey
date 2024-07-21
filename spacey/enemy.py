@@ -2,6 +2,8 @@ import random
 
 import pygame
 
+from spacey.position import Position
+
 from .bullet import Bullet, Direction
 from .hitbox import Hitbox
 
@@ -10,8 +12,9 @@ class Enemy:
     def __init__(self, x, y, screen) -> None:
         width = 60
         height = 60
+        self.pos = Position(x, y)
         self.rect = pygame.Rect(x, y, width, height)
-        self.hitbox = Hitbox(x, y, width, height)
+        self.hitbox = Hitbox(self.pos, width, height)
         self.screen = screen
         self.cooldown = 1000
         self.last = pygame.time.get_ticks()
@@ -31,16 +34,13 @@ class Enemy:
         self.shoot()
         for bullet in self.bullets:
             bullet.update()
-            if bullet.get_position()[0] < 0:
+            if bullet.pos.x < 0:
                 self.bullets.remove(bullet)
 
     def draw(self):
         pygame.draw.rect(self.screen, self.get_color(), self.rect)
         for bullet in self.bullets:
             bullet.draw()
-
-    def get_position(self):
-        return [self.rect.x, self.rect.y]
 
     def get_color(self):
         if self.dead:
@@ -51,22 +51,22 @@ class Enemy:
         now = pygame.time.get_ticks()
         if now - self.last_bullet > self.cooldown:
             self.last_bullet = now
-            x, y = self.get_position()
-            bullet = Bullet(x, y, Direction.Left, self.screen)
+            bullet = Bullet(self.pos.x, self.pos.y, Direction.Left, self.screen)
             self.bullets.append(bullet)
 
     def move(self, x_offset, y_offset):
-        x, y = self.get_position()
-        if x + x_offset < 0:
+        if self.pos.x + x_offset < 0:
             return
-        if x + x_offset > 1920 - self.rect.width:
+        if self.pos.x + x_offset > 1920 - self.rect.width:
             return
-        if y + y_offset < 0:
+        if self.pos.y + y_offset < 0:
             return
-        if y + y_offset > 1080 - self.rect.height:
+        if self.pos.y + y_offset > 1080 - self.rect.height:
             return
         self.rect.move_ip(x_offset, y_offset)
-        self.hitbox.update_pos(x_offset, y_offset)
+        self.pos.x += x_offset
+        self.pos.y += y_offset
+        self.hitbox.update_pos(self.pos)
 
     def sound(self):
         pygame.mixer.pre_init()

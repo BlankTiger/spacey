@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 import random
 
 import pygame
@@ -11,6 +12,7 @@ from .player import Player
 def main():
     pygame.init()
     screen = pygame.display.set_mode((1920, 1080))
+    pygame.display.set_caption("Spacey")
     clock = pygame.time.Clock()
     game = Game(screen, clock)
     game.game_loop()
@@ -19,6 +21,10 @@ def main():
 class Game:
     def __init__(self, screen, clock):
         self.screen = screen
+        self.bg = pygame.image.load("images/bgs/lvl1.png").convert()
+        self.tiles_horizontally = math.ceil(1920 / self.bg.get_width()) + 2
+        self.tiles_vertically = math.ceil(1080 / self.bg.get_height()) + 2
+        self.scroll = 0
         self.clock = clock
         self.running = True
         self.dt = 0.0
@@ -50,13 +56,23 @@ class Game:
         for enemy in self.enemies:
             enemy.update()
         self.handle_shots()
+        self.scroll -= 5
+        if abs(self.scroll) >= self.bg.get_width():
+            self.scroll = 0
 
     def draw(self):
         self.screen.fill("gray")
+        for i in range(self.tiles_horizontally):
+            for j in range(self.tiles_vertically):
+                self.screen.blit(
+                    self.bg,
+                    (i * self.bg.get_width() + self.scroll, j * self.bg.get_height()),
+                )
         self.player.draw()
         for enemy in self.enemies:
             enemy.draw()
         pygame.display.flip()
+        pygame.display.update()
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -76,8 +92,3 @@ class Game:
             if enemy.dead and pygame.time.get_ticks() - enemy.died_at > 1000:
                 self.enemies.remove(enemy)
             self.player.die_if_shot(enemy.bullets)
-            if (
-                self.player.dead
-                and pygame.time.get_ticks() - self.player.died_at > 1000
-            ):
-                self.player.die()

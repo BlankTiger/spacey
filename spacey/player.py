@@ -1,17 +1,21 @@
 import pygame
 
-from .bullet import Bullet, Direction
-from .hitbox import Hitbox
+from spacey.bullet import Bullet, Direction
+from spacey.hitbox import Hitbox
+from spacey.position import Position
 
 
-class Player:
+class Player(pygame.sprite.Sprite):
     def __init__(self, screen) -> None:
-        x = 50
-        y = 500
-        width = 60
-        height = 60
-        self.rect = pygame.Rect(x, y, width, height)
-        self.hitbox = Hitbox(x, y, width, height)
+        super()
+        self.pos = Position(50, 500)
+        width = 140
+        height = 140
+        self.load_full_health(width, height)
+        width = self.image.get_width()
+        height = self.image.get_height()
+        self.rect = pygame.Rect(self.pos.x, self.pos.y, width, height)
+        self.hitbox = Hitbox(self.pos, width / 1.3, height / 1.3)
         self.screen = screen
         self.bullets: list[Bullet] = []
         self.cooldown = 180
@@ -20,15 +24,16 @@ class Player:
         self.sound()
         self.sound_played = False
 
-    def get_position(self):
-        return [self.rect.x, self.rect.y]
+    def load_full_health(self, width, height):
+        self.image = pygame.image.load("images/ship/ship_full_health.png")
+        self.image = pygame.transform.scale(self.image, (width, height))
+        self.image = pygame.transform.rotate(self.image, 270)
 
     def shoot(self):
         now = pygame.time.get_ticks()
         if now - self.last > self.cooldown:
             self.last = now
-            x, y = self.get_position()
-            bullet = Bullet(x, y, Direction.Right, self.screen)
+            bullet = Bullet(self.pos.x, self.pos.y, Direction.Right, self.screen)
             self.bullets.append(bullet)
             pygame.mixer.Sound.play(self.shoot_sound)
 
@@ -36,26 +41,27 @@ class Player:
         self.handle_actions()
         for bullet in self.bullets:
             bullet.update()
-            if bullet.get_position()[0] > 1920:
+            if bullet.pos.x > 1920:
                 self.bullets.remove(bullet)
 
     def draw(self):
-        pygame.draw.rect(self.screen, self.get_color(), self.rect)
+        self.screen.blit(self.image, (self.pos.x, self.pos.y))
         for bullet in self.bullets:
             bullet.draw()
 
     def move(self, x_offset, y_offset):
-        x, y = self.get_position()
-        if x + x_offset < 0:
+        if self.pos.x + x_offset < 0:
             return
-        if x + x_offset > 1920 - self.rect.width:
+        if self.pos.x + x_offset > 1920 - self.rect.width:
             return
-        if y + y_offset < 0:
+        if self.pos.y + y_offset < 0:
             return
-        if y + y_offset > 1080 - self.rect.height:
+        if self.pos.y + y_offset > 1080 - self.rect.height:
             return
         self.rect.move_ip(x_offset, y_offset)
-        self.hitbox.update_pos(x_offset, y_offset)
+        self.pos.x += x_offset
+        self.pos.y += y_offset
+        self.hitbox.update_pos(self.pos)
 
     def sound(self):
         pygame.mixer.pre_init()
