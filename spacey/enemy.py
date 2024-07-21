@@ -16,14 +16,11 @@ class Enemy:
         self.cooldown = 1000
         self.last = pygame.time.get_ticks()
         self.last_bullet = pygame.time.get_ticks()
-        self.bullets = []
+        self.bullets: list[Bullet] = []
         self.dead = False
         self.died_at = 0
 
-    def get_position(self):
-        return [self.rect.x, self.rect.y]
-
-    def draw(self):
+    def update(self):
         random_x = random.randint(-50, 50)
         random_y = random.randint(-50, 50)
         now = pygame.time.get_ticks()
@@ -31,11 +28,18 @@ class Enemy:
             self.last = now
             self.move(random_x, random_y)
         self.shoot()
+        for bullet in self.bullets:
+            bullet.update()
+            if bullet.get_position()[0] < 0:
+                self.bullets.remove(bullet)
+
+    def draw(self):
         pygame.draw.rect(self.screen, self.get_color(), self.rect)
         for bullet in self.bullets:
             bullet.draw()
-            if bullet.get_position()[0] < 0:
-                self.bullets.remove(bullet)
+
+    def get_position(self):
+        return [self.rect.x, self.rect.y]
 
     def get_color(self):
         if self.dead:
@@ -64,6 +68,9 @@ class Enemy:
         self.hitbox.update_pos(x_offset, y_offset)
 
     def die_if_shot(self, bullets):
+        if self.dead:
+            return
+
         for bullet in bullets:
             if self.hitbox.overlaps(bullet.hitbox):
                 print("Enemy hit!")

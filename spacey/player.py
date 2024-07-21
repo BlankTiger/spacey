@@ -29,12 +29,16 @@ class Player:
             bullet = Bullet(x, y, Direction.Right, self.screen)
             self.bullets.append(bullet)
 
+    def update(self):
+        self.handle_actions()
+        for bullet in self.bullets:
+            if bullet.get_position()[0] > 1920:
+                self.bullets.remove(bullet)
+
     def draw(self):
         pygame.draw.rect(self.screen, self.get_color(), self.rect)
         for bullet in self.bullets:
             bullet.draw()
-            if bullet.get_position()[0] > 1920:
-                self.bullets.remove(bullet)
 
     def move(self, x_offset, y_offset):
         x, y = self.get_position()
@@ -50,6 +54,9 @@ class Player:
         self.hitbox.update_pos(x_offset, y_offset)
 
     def die_if_shot(self, bullets):
+        if self.dead:
+            return
+
         for bullet in bullets:
             if self.hitbox.overlaps(bullet.hitbox):
                 print("You Died")

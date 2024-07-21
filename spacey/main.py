@@ -46,18 +46,8 @@ class Game:
     def update(self):
         self.handle_events()
         self.handle_clicks()
-        self.player.handle_actions()
-        bullets = self.player.bullets
-        for enemy in self.enemies:
-            enemy.die_if_shot(bullets)
-            if enemy.dead and pygame.time.get_ticks() - enemy.died_at > 1000:
-                self.enemies.remove(enemy)
-            self.player.die_if_shot(enemy.bullets)
-            if (
-                self.player.dead
-                and pygame.time.get_ticks() - self.player.died_at > 1000
-            ):
-                self.player.die()
+        self.player.update()
+        self.handle_shots()
 
     def draw(self):
         self.screen.fill("gray")
@@ -77,3 +67,12 @@ class Game:
             pygame.display.toggle_fullscreen()
         if pressed_keys[pygame.K_ESCAPE]:
             self.running = False
+
+    def handle_shots(self):
+        for enemy in self.enemies:
+            enemy.die_if_shot(self.player.bullets)
+            if enemy.dead and pygame.time.get_ticks() - enemy.died_at > 1000:
+                self.enemies.remove(enemy)
+            self.player.die_if_shot(enemy.bullets)
+            if self.player.dead and pygame.time.get_ticks() - self.player.died_at > 1000:
+                self.player.die()
