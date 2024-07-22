@@ -34,9 +34,9 @@ class Frank(Enemy, pygame.sprite.Sprite):
         pos = self.pos_for_hitbox()
         self.hitbox = Hitbox(pos.x, pos.y, width, height)
         self.screen = screen
-        self.cooldown = 4000
+        self.cooldown = 4200
         self.last = pygame.time.get_ticks()
-        self.last_bullet = pygame.time.get_ticks()
+        self.last_bullet = pygame.time.get_ticks() - 2000
         self.projectiles: list[Projectile] = []
         self.dead = False
         self.died_at = 0
