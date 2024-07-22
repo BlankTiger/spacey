@@ -78,6 +78,8 @@ class Game:
         self.player.draw()
         for enemy in self.enemies:
             enemy.draw()
+
+        self.show_score()
         pygame.display.flip()
         pygame.display.update()
 
@@ -115,3 +117,12 @@ class Game:
 
     def add_score(self, amount):
         self.score += amount
+
+    def show_score(self):
+        black = (0, 0, 0, 255)
+        light_blue = (0, 255, 255)
+        font = pygame.font.Font("freesansbold.ttf", 64)
+        text = font.render(f"{self.score}", True, light_blue, black)
+        textRect = text.get_rect()
+        textRect.center = (1800, 1080 // 12)
+        self.screen.blit(text, textRect)
