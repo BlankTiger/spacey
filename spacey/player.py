@@ -76,7 +76,7 @@ class Player(pygame.sprite.Sprite):
         self.health.update()
         for bullet in self.bullets:
             bullet.update()
-            if bullet.pos.x > 1920:
+            if bullet.pos.x > 1920 or bullet.did_hit:
                 self.bullets.remove(bullet)
 
     def draw(self):
@@ -120,7 +120,7 @@ class Player(pygame.sprite.Sprite):
         pygame.mixer.Sound.play(self.getting_shot_sound)
         pygame.mixer.Sound.set_volume(self.getting_shot_sound, 0.3)
 
-    def get_shot(self, bullets):
+    def lose_health_if_shot(self, bullets: list[Bullet]):
         if self.health.health <= 0:
             self.dead = True
             self.died_at = pygame.time.get_ticks()
@@ -128,7 +128,8 @@ class Player(pygame.sprite.Sprite):
             return
 
         for bullet in bullets:
-            if self.hitbox.overlaps(bullet.hitbox) and bullet not in self.shot_by:
+            if self.hitbox.overlaps(bullet.hitbox):
+                bullet.hit()
                 print("You got shot")
                 self.health.shot()
                 self.shot_by.add(bullet)

@@ -2,24 +2,15 @@ from enum import Enum
 
 import pygame
 
+from spacey.hitbox import Hitbox
 from spacey.position import Position
-
-from .hitbox import Hitbox
-from .spritesheet import Spritesheet
+from spacey.singleton import Singleton
+from spacey.spritesheet import Spritesheet
 
 
 class Direction(Enum):
     Left = 1
     Right = 2
-
-
-class Singleton(type):
-    _instances = {}
-
-    def __call__(cls, *args, **kwargs):
-        if cls not in cls._instances:
-            cls._instances[cls] = super().__call__(*args, **kwargs)
-        return cls._instances[cls]
 
 
 class BulletImages(metaclass=Singleton):
@@ -55,6 +46,14 @@ class Bullet(pygame.sprite.Sprite):
         self.curr_img = 0
         self.image = self.images[self.curr_img]
         self.hitbox = Hitbox(self.pos.x, self.pos.y, 30, 30)
+        self._hit = False
+
+    def hit(self):
+        self._hit = True
+
+    @property
+    def did_hit(self):
+        return self._hit
 
     def update(self):
         self.pos.x += self.x_change

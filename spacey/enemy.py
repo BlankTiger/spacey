@@ -2,10 +2,24 @@ import random
 
 import pygame
 
+from spacey.bullet import Bullet, Direction
+from spacey.hitbox import Hitbox
 from spacey.position import Position
+from spacey.singleton import Singleton
+from spacey.spritesheet import Spritesheet
 
-from .bullet import Bullet, Direction
-from .hitbox import Hitbox
+
+class FighterDyingImages(metaclass=Singleton):
+    def __init__(self, width, height):
+        self.dying_images = self.load_dying_images(width, height)
+        print(self.dying_images)
+
+    def load_dying_images(self, width, height):
+        spritesheet = Spritesheet("images/enemies/fighter_death_spritesheet.png", (64, 576))
+        images = [spritesheet.get_sprite((0, x)) for x in range(9)]
+        images = [pygame.transform.smoothscale_by(image, 3) for image in images]
+        images = [pygame.transform.rotate(image, 90) for image in images]
+        return images
 
 
 class Enemy(pygame.sprite.Sprite):
@@ -27,8 +41,12 @@ class Enemy(pygame.sprite.Sprite):
         self.image = pygame.image.load("images/enemies/fighter.png")
         self.image = pygame.transform.scale_by(self.image, 3)
         self.image = pygame.transform.rotate(self.image, 90)
+        self.dying_images = FighterDyingImages(width, height).dying_images
+        self.dying_image_idx = 0
 
     def update(self):
+        if self.dead:
+            self.die_animation()
         random_x = random.randint(-50, 50)
         random_y = random.randint(-50, 50)
         now = pygame.time.get_ticks()
@@ -38,8 +56,16 @@ class Enemy(pygame.sprite.Sprite):
         self.shoot()
         for bullet in self.bullets:
             bullet.update()
-            if bullet.pos.x < 0:
+
+            if bullet.pos.x < 0 or bullet.did_hit:
                 self.bullets.remove(bullet)
+
+    def die_animation(self):
+        self.dying_image_idx += 0.2
+        if self.dying_image_idx >= len(self.dying_images):
+            self._finished_dying = True
+            return
+        self.image = self.dying_images[int(self.dying_image_idx)]
 
     def draw(self):
         self.screen.blit(self.image, (self.pos.x, self.pos.y))
@@ -85,13 +111,21 @@ class Enemy(pygame.sprite.Sprite):
         pygame.mixer.Sound.set_volume(self.death_sound, 0.2)
         pygame.mixer.Sound.set_volume(self.damage_sound, 0.2)
 
-    def die_if_shot(self, bullets):
+    def die_if_shot(self, bullets: list[Bullet]):
         if self.dead:
             return
 
         for bullet in bullets:
             if self.hitbox.overlaps(bullet.hitbox):
-                print("Enemy hit!")
-                pygame.mixer.Sound.play(self.damage_sound)
-                self.dead = True
-                self.died_at = pygame.time.get_ticks()
+                bullet.hit()
+                self.die()
+
+    def die(self):
+        print("Enemy hit!")
+        pygame.mixer.Sound.play(self.damage_sound)
+        self.dead = True
+        self.died_at = pygame.time.get_ticks()
+        self._finished_dying = False
+
+    def finished_dying(self):
+        return self._finished_dying

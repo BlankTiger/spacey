@@ -29,7 +29,7 @@ class Game:
         self.running = True
         self.dt = 0.0
         self.player = Player(self.screen)
-        self.enemies = []
+        self.enemies: list[Enemy] = []
         self.create_enemies(5)
 
     def create_enemies(self, amount):
@@ -89,6 +89,6 @@ class Game:
     def handle_shots(self):
         for enemy in self.enemies:
             enemy.die_if_shot(self.player.bullets)
-            if enemy.dead and pygame.time.get_ticks() - enemy.died_at > 1000:
+            if enemy.dead and enemy.finished_dying():
                 self.enemies.remove(enemy)
-            self.player.get_shot(enemy.bullets)
+            self.player.lose_health_if_shot(enemy.bullets)
