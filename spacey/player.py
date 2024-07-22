@@ -53,6 +53,7 @@ class Player(pygame.sprite.Sprite):
         self.sound_played = False
         self.health = Health(self.screen)
         self.shot_by = set()
+        self.took_damage = False
 
     def pos_for_hitbox(self):
         return self.pos.x + 30, self.pos.y + 35
@@ -114,7 +115,10 @@ class Player(pygame.sprite.Sprite):
             self.sound_played = True
             pygame.mixer.music.stop()
 
-    def getting_shot_sfx(self): ...
+    def getting_shot_sfx(self):
+        self.getting_shot_sound = pygame.mixer.Sound("sounds/take_damage.mp3")
+        pygame.mixer.Sound.play(self.getting_shot_sound)
+        pygame.mixer.Sound.set_volume(self.getting_shot_sound, 0.3)
 
     def get_shot(self, bullets):
         if self.health.health <= 0:
