@@ -11,8 +11,8 @@ class Health:
         self.screen = screen
         self.rect = pygame.rect.Rect(100, 70, self.get_health_width(), 40)
         self.outline = self.rect.copy()
-        self.outline.x -= 5
-        self.outline.y -= 5
+        self.outline.x -= 4.4
+        self.outline.y -= 4
         self.outline.width = 1.01 * self.rect.width
         self.outline.height = 1.2 * self.rect.height
 
