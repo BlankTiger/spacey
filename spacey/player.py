@@ -3,11 +3,12 @@ import pygame
 from spacey.bullet import Bullet, Direction
 from spacey.hitbox import Hitbox
 from spacey.position import Position
+from spacey.singleton import Singleton
 
 
 class Health:
     def __init__(self, screen):
-        self.health = 100
+        self._health = 100
         self.screen = screen
         self.rect = pygame.rect.Rect(100, 70, self.get_health_width(), 40)
         self.outline = self.rect.copy()
@@ -17,7 +18,7 @@ class Health:
         self.outline.height = 1.2 * self.rect.height
 
     def get_health_width(self):
-        return self.health * 9
+        return self._health * 9
 
     def draw(self):
         pygame.draw.rect(self.screen, (255, 0, 0), self.rect)
@@ -25,11 +26,29 @@ class Health:
 
     def update(self):
         self.rect.width = self.get_health_width()
-        if self.health <= 0:
-            self.health = 0
+        if self._health <= 0:
+            self._health = 0
 
     def shot(self):
-        self.health -= 25
+        self._health -= 20
+
+    @property
+    def health(self):
+        return self._health
+
+
+class PlayerDamageImages(metaclass=Singleton):
+    def __init__(self, width, height):
+        self.damaged_images = self.load_damaged_images(width, height)
+
+    def load_damaged_images(self, width, height):
+        images = []
+        for idx in range(3):
+            image = pygame.image.load(f"images/ship/ship_damage_{idx}.png")
+            image = pygame.transform.scale(image, (width, height))
+            image = pygame.transform.rotate(image, 270)
+            images.append(image)
+        return images
 
 
 class Player(pygame.sprite.Sprite):
@@ -51,9 +70,10 @@ class Player(pygame.sprite.Sprite):
         self.dead = False
         self.sound()
         self.sound_played = False
-        self.health = Health(self.screen)
+        self._health = Health(self.screen)
         self.shot_by = set()
         self.took_damage = False
+        self.damaged_images = PlayerDamageImages(width, height).damaged_images
 
     def pos_for_hitbox(self):
         return self.pos.x + 30, self.pos.y + 35
@@ -73,17 +93,32 @@ class Player(pygame.sprite.Sprite):
 
     def update(self):
         self.handle_actions()
-        self.health.update()
+        self._health.update()
+        self.update_image_based_on_health()
         for bullet in self.bullets:
             bullet.update()
             if bullet.pos.x > 1920 or bullet.did_hit:
                 self.bullets.remove(bullet)
 
+    def update_image_based_on_health(self):
+        if self.health == 100:
+            self.image = self.image
+        elif self.health < 100 and self.health >= 50:
+            self.image = self.damaged_images[0]
+        elif self.health < 50 and self.health > 25:
+            self.image = self.damaged_images[1]
+        elif self.health <= 25:
+            self.image = self.damaged_images[2]
+
+    @property
+    def health(self):
+        return self._health.health
+
     def draw(self):
         self.screen.blit(self.image, (self.pos.x, self.pos.y))
         for bullet in self.bullets:
             bullet.draw()
-        self.health.draw()
+        self._health.draw()
 
     def move(self, x_offset, y_offset):
         if self.pos.x + x_offset < 0:
@@ -121,7 +156,7 @@ class Player(pygame.sprite.Sprite):
         pygame.mixer.Sound.set_volume(self.getting_shot_sound, 0.3)
 
     def lose_health_if_shot(self, bullets: list[Bullet]):
-        if self.health.health <= 0:
+        if self._health.health <= 0:
             self.dead = True
             self.died_at = pygame.time.get_ticks()
             self.death_sfx()
@@ -131,7 +166,7 @@ class Player(pygame.sprite.Sprite):
             if self.hitbox.overlaps(bullet.hitbox):
                 bullet.hit()
                 print("You got shot")
-                self.health.shot()
+                self._health.shot()
                 self.shot_by.add(bullet)
                 self.getting_shot_sfx()
 

@@ -5,8 +5,8 @@ import random
 
 import pygame
 
-from .enemy import Enemy
-from .player import Player
+from spacey.enemy import Enemy
+from spacey.player import Player
 
 
 def main():
