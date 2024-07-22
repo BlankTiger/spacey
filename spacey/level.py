@@ -13,7 +13,7 @@ class Level:
         self.tiles_horizontally = math.ceil(1920 / self.bg.get_width()) + 2
         self.tiles_vertically = math.ceil(1080 / self.bg.get_height()) + 2
         self.scroll = 0
-        self.scroll_speed = random.randint(5, 50)
+        self.scroll_speed = random.randint(5, 30)
 
     def init(self):
         self.enemies = self.create_enemies(5)
@@ -31,4 +31,16 @@ class Level:
 
 
 def load_levels(screen):
-    return [Level(f"images/bgs/lvl{i}.png", screen) for i in range(1, 35)]
+    return [Level(f"images/bgs/lvl{i}.png", screen) for i in range(1, 34)]
+
+
+# def show_level(self):
+#     black = (0, 0, 0, 0)
+#     light_blue = (0, 255, 255)
+#     font = pygame.font.Font("freesansbold.ttf", 128)
+#     text = font.render("Text_here", True, light_blue, black)
+#     textRect = text.get_rect()
+#     textRect.center = (1920 // 2, 1080 // 2)
+#     self.screen.blit(text, textRect)
+#     pygame.display.update()
+#     pygame.display.flip()

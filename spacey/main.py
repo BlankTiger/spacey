@@ -31,6 +31,7 @@ class Game:
         self.level = self.levels[self.curr_level]
         self.level.init()
         self.enemies: list[EnemyFighter] = self.level.enemies
+        self.load_top_score()
 
     def next_level(self):
         self.curr_level += 1
@@ -51,6 +52,10 @@ class Game:
         self.handle_clicks()
         if len(self.enemies) == 0:
             self.next_level()
+        if self.player.dead:
+            self.save_top_score()
+            self.load_top_score()
+            return
         if self.won_the_game():
             return
         self.player.update()
@@ -62,6 +67,9 @@ class Game:
             self.level.scroll = 0
 
     def draw(self):
+        if self.player.dead:
+            self.show_top_score()
+            return
         if self.won_the_game():
             self.winning_screen()
             return
@@ -129,3 +137,31 @@ class Game:
         textRect = text.get_rect()
         textRect.center = (1800, 1080 // 12)
         self.screen.blit(text, textRect)
+
+    def save_top_score(self):
+        if self.score <= int(self.top_score):
+            return
+        with open("top_score", "w") as f:
+            f.write(str(self.score))
+
+    def load_top_score(self):
+        with open("top_score", "r") as f:
+            self.top_score = f.read()
+
+    def show_top_score(self):
+        black = (0, 0, 0)
+        light_blue = (0, 255, 255)
+        font = pygame.font.Font("freesansbold.ttf", 128)
+        font1 = pygame.font.Font("freesansbold.ttf", 64)
+        text1 = font.render("You lose!", True, light_blue, black)
+        text = font1.render(
+            f"Current high score: {self.top_score}", True, light_blue, black
+        )
+        textRect = text.get_rect()
+        textRect1 = text1.get_rect()
+        textRect1.center = (1920 // 2, 1080 // 2.1)
+        textRect.center = (1920 // 2, 1080 // 1.6)
+        self.screen.blit(text, textRect)
+        self.screen.blit(text1, textRect1)
+        pygame.display.update()
+        pygame.display.flip()

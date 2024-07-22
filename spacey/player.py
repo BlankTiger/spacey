@@ -87,7 +87,9 @@ class Player(pygame.sprite.Sprite):
         now = pygame.time.get_ticks()
         if now - self.last > self.cooldown:
             self.last = now
-            bullet = Bullet(self.pos.x + 90, self.pos.y + 58, Direction.Right, self.screen)
+            bullet = Bullet(
+                self.pos.x + 90, self.pos.y + 58, Direction.Right, self.screen
+            )
             self.bullets.append(bullet)
             pygame.mixer.Sound.play(self.shoot_sound)
 
@@ -140,9 +142,9 @@ class Player(pygame.sprite.Sprite):
         self.shoot_sound = pygame.mixer.Sound("sounds/bullet.mp3")
         pygame.mixer.Sound.set_volume(self.death_sound, 0.3)
         pygame.mixer.Sound.set_volume(self.shoot_sound, 0.1)
-        pygame.mixer.music.load("sounds/song2.mp3")
+        pygame.mixer.music.load("sounds/song3.mp3")
         pygame.mixer.music.play(-1)
-        pygame.mixer.music.set_volume(0.15)
+        pygame.mixer.music.set_volume(0.1)
 
     def death_sfx(self):
         if not self.sound_played:
