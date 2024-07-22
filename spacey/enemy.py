@@ -22,7 +22,7 @@ class FighterDyingImages(metaclass=Singleton):
         return images
 
 
-class Enemy(pygame.sprite.Sprite):
+class EnemyFighter(pygame.sprite.Sprite):
     def __init__(self, x, y, screen) -> None:
         width = 60
         height = 60

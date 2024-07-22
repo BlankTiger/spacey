@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-import math
 import random
 
 import pygame
 
-from spacey.enemy import Enemy
+from spacey.enemy import EnemyFighter
+from spacey.level import load_levels
 from spacey.player import Player
 
 
@@ -21,26 +21,22 @@ def main():
 class Game:
     def __init__(self, screen, clock):
         self.screen = screen
-        self.bg = pygame.image.load("images/bgs/lvl1.png").convert()
-        self.tiles_horizontally = math.ceil(1920 / self.bg.get_width()) + 2
-        self.tiles_vertically = math.ceil(1080 / self.bg.get_height()) + 2
-        self.scroll = 0
         self.clock = clock
         self.running = True
         self.dt = 0.0
         self.player = Player(self.screen)
-        self.enemies: list[Enemy] = []
-        self.create_enemies(5)
         self.score = 0
+        self.levels = load_levels(self.screen)
+        self.curr_level = 0
+        self.level = self.levels[self.curr_level]
+        self.level.init()
+        self.enemies: list[EnemyFighter] = self.level.enemies
 
-    def create_enemies(self, amount):
-        x_range = [1500, 1900]
-        y_range = [0, 1080]
-        for _ in range(amount):
-            x = random.randint(x_range[0], x_range[1])
-            y = random.randint(y_range[0], y_range[1])
-            enemy = Enemy(x, y, self.screen)
-            self.enemies.append(enemy)
+    def next_level(self):
+        self.curr_level += 1
+        self.level = self.levels[self.curr_level]
+        self.level.init()
+        self.enemies = self.level.enemies
 
     def game_loop(self):
         while self.running:
@@ -53,27 +49,31 @@ class Game:
     def update(self):
         self.handle_events()
         self.handle_clicks()
-        print(self.score)
         if len(self.enemies) == 0:
+            self.next_level()
+        if self.won_the_game():
             return
         self.player.update()
         for enemy in self.enemies:
             enemy.update()
         self.handle_shots()
-        self.scroll -= 10
-        if abs(self.scroll) >= self.bg.get_width():
-            self.scroll = 0
+        self.level.scroll -= 10
+        if abs(self.level.scroll) >= self.level.bg.get_width():
+            self.level.scroll = 0
 
     def draw(self):
-        if len(self.enemies) == 0:
+        if self.won_the_game():
             self.winning_screen()
             return
         self.screen.fill("gray")
-        for i in range(self.tiles_horizontally):
-            for j in range(self.tiles_vertically):
+        for i in range(self.level.tiles_horizontally):
+            for j in range(self.level.tiles_vertically):
                 self.screen.blit(
-                    self.bg,
-                    (i * self.bg.get_width() + self.scroll, j * self.bg.get_height()),
+                    self.level.bg,
+                    (
+                        i * self.level.bg.get_width() + self.level.scroll,
+                        j * self.level.bg.get_height(),
+                    ),
                 )
         self.player.draw()
         for enemy in self.enemies:
@@ -82,6 +82,9 @@ class Game:
         self.show_score()
         pygame.display.flip()
         pygame.display.update()
+
+    def won_the_game(self):
+        return self.levels.index(self.level) == len(self.levels)
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -108,7 +111,7 @@ class Game:
         black = (0, 0, 0, 0)
         light_blue = (0, 255, 255)
         font = pygame.font.Font("freesansbold.ttf", 128)
-        text = font.render("You Win!", True, light_blue, black)
+        text = font.render("You win!", True, light_blue, black)
         textRect = text.get_rect()
         textRect.center = (1920 // 2, 1080 // 2)
         self.screen.blit(text, textRect)
