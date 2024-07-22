@@ -87,7 +87,7 @@ class Player(pygame.sprite.Sprite):
         now = pygame.time.get_ticks()
         if now - self.last > self.cooldown:
             self.last = now
-            bullet = Bullet(self.pos.x, self.pos.y, Direction.Right, self.screen)
+            bullet = Bullet(self.pos.x + 90, self.pos.y + 58, Direction.Right, self.screen)
             self.bullets.append(bullet)
             pygame.mixer.Sound.play(self.shoot_sound)
 

@@ -52,7 +52,7 @@ class Enemy(pygame.sprite.Sprite):
         now = pygame.time.get_ticks()
         if now - self.last > self.cooldown:
             self.last = now
-            self.move(random_x, random_y)
+            # self.move(random_x, random_y)
         self.shoot()
         for bullet in self.bullets:
             bullet.update()
@@ -81,7 +81,7 @@ class Enemy(pygame.sprite.Sprite):
         now = pygame.time.get_ticks()
         if now - self.last_bullet > self.cooldown:
             self.last_bullet = now
-            bullet = Bullet(self.pos.x, self.pos.y, Direction.Left, self.screen)
+            bullet = Bullet(self.pos.x + 40, self.pos.y + 86, Direction.Left, self.screen)
             self.bullets.append(bullet)
             pygame.mixer.Sound.play(self.shoot_sound)
 
