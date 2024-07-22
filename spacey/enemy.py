@@ -15,7 +15,9 @@ class FighterDyingImages(metaclass=Singleton):
         print(self.dying_images)
 
     def load_dying_images(self, width, height):
-        spritesheet = Spritesheet("images/enemies/fighter_death_spritesheet.png", (64, 576))
+        spritesheet = Spritesheet(
+            "images/enemies/fighter_death_spritesheet.png", (64, 576)
+        )
         images = [spritesheet.get_sprite((0, x)) for x in range(9)]
         images = [pygame.transform.smoothscale_by(image, 3) for image in images]
         images = [pygame.transform.rotate(image, 90) for image in images]
@@ -81,18 +83,20 @@ class EnemyFighter(pygame.sprite.Sprite):
         now = pygame.time.get_ticks()
         if now - self.last_bullet > self.cooldown:
             self.last_bullet = now
-            bullet = Bullet(self.pos.x + 40, self.pos.y + 86, Direction.Left, self.screen)
+            bullet = Bullet(
+                self.pos.x + 40, self.pos.y + 86, Direction.Left, self.screen
+            )
             self.bullets.append(bullet)
             pygame.mixer.Sound.play(self.shoot_sound)
 
     def move(self, x_offset, y_offset):
         if self.pos.x + x_offset < 0:
             return
-        if self.pos.x + x_offset > 1920 - self.rect.width:
+        if self.pos.x + x_offset > 1920 - self.hitbox.width:
             return
         if self.pos.y + y_offset < 0:
             return
-        if self.pos.y + y_offset > 1080 - self.rect.height:
+        if self.pos.y + y_offset > 1080 - self.hitbox.height:
             return
         self.rect.move_ip(x_offset, y_offset)
         self.pos.x += x_offset

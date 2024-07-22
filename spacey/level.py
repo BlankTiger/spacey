@@ -18,8 +18,8 @@ class Level:
         self.enemies = self.create_enemies(5)
 
     def create_enemies(self, amount):
-        x_range = [1500, 1900]
-        y_range = [0, 1080]
+        x_range = [1500, 1800]
+        y_range = [100, 900]
         enemies = []
         for _ in range(amount):
             x = random.randint(x_range[0], x_range[1])
