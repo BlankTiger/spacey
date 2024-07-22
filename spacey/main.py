@@ -18,6 +18,9 @@ def main():
 
 class Game:
     def __init__(self, screen, clock):
+        self.init(screen, clock)
+
+    def init(self, screen, clock):
         self.screen = screen
         self.clock = clock
         self.running = True
@@ -96,6 +99,8 @@ class Game:
             pygame.display.toggle_fullscreen()
         if pressed_keys[pygame.K_ESCAPE]:
             self.running = False
+        if pressed_keys[pygame.K_r]:
+            self.init(self.screen, self.clock)
 
     def handle_shots(self):
         for enemy in self.enemies:
