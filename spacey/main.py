@@ -31,6 +31,7 @@ class Game:
         self.player = Player(self.screen)
         self.enemies: list[Enemy] = []
         self.create_enemies(5)
+        self.score = 0
 
     def create_enemies(self, amount):
         x_range = [1500, 1900]
@@ -52,6 +53,7 @@ class Game:
     def update(self):
         self.handle_events()
         self.handle_clicks()
+        print(self.score)
         if len(self.enemies) == 0:
             return
         self.player.update()
@@ -96,19 +98,20 @@ class Game:
             enemy.die_if_shot(self.player.bullets)
             if enemy.dead and enemy.finished_dying():
                 self.enemies.remove(enemy)
+                self.add_score(5)
 
             self.player.lose_health_if_shot(enemy.bullets)
 
     def winning_screen(self):
-        # white = (255, 255, 255)
-        # green = (0, 255, 0)
         black = (0, 0, 0, 0)
-        # blue = (0, 0, 128)
         light_blue = (0, 255, 255)
         font = pygame.font.Font("freesansbold.ttf", 128)
         text = font.render("You Win!", True, light_blue, black)
         textRect = text.get_rect()
-        textRect.center = (1920 // 2, 1080 // 2)  # (X // 2, Y // 2)
+        textRect.center = (1920 // 2, 1080 // 2)
         self.screen.blit(text, textRect)
         pygame.display.update()
         pygame.display.flip()
+
+    def add_score(self, amount):
+        self.score += amount
