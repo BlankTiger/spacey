@@ -52,6 +52,8 @@ class Game:
     def update(self):
         self.handle_events()
         self.handle_clicks()
+        if len(self.enemies) == 0:
+            return
         self.player.update()
         for enemy in self.enemies:
             enemy.update()
@@ -61,6 +63,9 @@ class Game:
             self.scroll = 0
 
     def draw(self):
+        if len(self.enemies) == 0:
+            self.winning_screen()
+            return
         self.screen.fill("gray")
         for i in range(self.tiles_horizontally):
             for j in range(self.tiles_vertically):
@@ -91,4 +96,19 @@ class Game:
             enemy.die_if_shot(self.player.bullets)
             if enemy.dead and enemy.finished_dying():
                 self.enemies.remove(enemy)
+
             self.player.lose_health_if_shot(enemy.bullets)
+
+    def winning_screen(self):
+        # white = (255, 255, 255)
+        # green = (0, 255, 0)
+        black = (0, 0, 0, 0)
+        # blue = (0, 0, 128)
+        light_blue = (0, 255, 255)
+        font = pygame.font.Font("freesansbold.ttf", 128)
+        text = font.render("You Win!", True, light_blue, black)
+        textRect = text.get_rect()
+        textRect.center = (1920 // 2, 1080 // 2)  # (X // 2, Y // 2)
+        self.screen.blit(text, textRect)
+        pygame.display.update()
+        pygame.display.flip()
