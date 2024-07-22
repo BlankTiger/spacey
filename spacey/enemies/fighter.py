@@ -2,9 +2,10 @@ import random
 
 import pygame
 
-from spacey.bullet import Bullet, Direction
+from spacey.enemies.enemy import Enemy
 from spacey.hitbox import Hitbox
 from spacey.position import Position
+from spacey.projectiles.bullet import Bullet, Direction
 from spacey.singleton import Singleton
 from spacey.spritesheet import Spritesheet
 
@@ -12,22 +13,20 @@ from spacey.spritesheet import Spritesheet
 class FighterDyingImages(metaclass=Singleton):
     def __init__(self, width, height):
         self.dying_images = self.load_dying_images(width, height)
-        print(self.dying_images)
 
     def load_dying_images(self, width, height):
-        spritesheet = Spritesheet(
-            "images/enemies/fighter_death_spritesheet.png", (64, 576)
-        )
+        spritesheet = Spritesheet("images/enemies/fighter_death_spritesheet.png", (64, 576))
         images = [spritesheet.get_sprite((0, x)) for x in range(9)]
         images = [pygame.transform.smoothscale_by(image, 3) for image in images]
         images = [pygame.transform.rotate(image, 90) for image in images]
         return images
 
 
-class EnemyFighter(pygame.sprite.Sprite):
+class EnemyFighter(Enemy, pygame.sprite.Sprite):
     def __init__(self, x, y, screen) -> None:
         width = 60
         height = 60
+        self.score_for_killing = 5
         self.pos = Position(x, y)
         self.rect = pygame.Rect(x, y, width, height)
         pos = self.pos_for_hitbox()
@@ -36,7 +35,7 @@ class EnemyFighter(pygame.sprite.Sprite):
         self.cooldown = 1000
         self.last = pygame.time.get_ticks()
         self.last_bullet = pygame.time.get_ticks()
-        self.bullets: list[Bullet] = []
+        self.projectiles: list[Bullet] = []
         self.dead = False
         self.died_at = 0
         self.sound()
@@ -56,11 +55,11 @@ class EnemyFighter(pygame.sprite.Sprite):
             self.last = now
             self.move(random_x, random_y)
         self.shoot()
-        for bullet in self.bullets:
+        for bullet in self.projectiles:
             bullet.update()
 
             if bullet.pos.x < 0 or bullet.did_hit:
-                self.bullets.remove(bullet)
+                self.projectiles.remove(bullet)
 
     def die_animation(self):
         self.dying_image_idx += 0.2
@@ -71,7 +70,7 @@ class EnemyFighter(pygame.sprite.Sprite):
 
     def draw(self):
         self.screen.blit(self.image, (self.pos.x, self.pos.y))
-        for bullet in self.bullets:
+        for bullet in self.projectiles:
             bullet.draw()
 
     def get_color(self):
@@ -83,10 +82,8 @@ class EnemyFighter(pygame.sprite.Sprite):
         now = pygame.time.get_ticks()
         if now - self.last_bullet > self.cooldown:
             self.last_bullet = now
-            bullet = Bullet(
-                self.pos.x + 40, self.pos.y + 86, Direction.Left, self.screen
-            )
-            self.bullets.append(bullet)
+            bullet = Bullet(self.pos.x + 40, self.pos.y + 86, Direction.Left, self.screen)
+            self.projectiles.append(bullet)
             pygame.mixer.Sound.play(self.shoot_sound)
 
     def move(self, x_offset, y_offset):

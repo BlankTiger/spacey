@@ -1,8 +1,8 @@
 import pygame
 
-from spacey.bullet import Bullet, Direction
 from spacey.hitbox import Hitbox
 from spacey.position import Position
+from spacey.projectiles.bullet import Bullet, Direction
 from spacey.singleton import Singleton
 
 
@@ -29,8 +29,8 @@ class Health:
         if self._health <= 0:
             self._health = 0
 
-    def shot(self):
-        self._health -= 20
+    def shot_for(self, damage):
+        self._health -= damage
 
     @property
     def health(self):
@@ -168,7 +168,7 @@ class Player(pygame.sprite.Sprite):
             if self.hitbox.overlaps(bullet.hitbox):
                 bullet.hit()
                 print("You got shot")
-                self._health.shot()
+                self._health.shot_for(bullet.damage)
                 self.shot_by.add(bullet)
                 self.getting_shot_sfx()
 

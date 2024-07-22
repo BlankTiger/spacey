@@ -1,0 +1,20 @@
+# plan today:
+- fix healthbar [done]
+- getting shot sfx [done]
+- fix sound system [done]
+- make levels with different bgs [done]
+- maybe different enemies [done kinda]
+- special effects when they die and when we die [done]
+- remove bullets if they hit target [done]
+- fix bullet placemenet when they get shot [done]
+- fix enemy AI
+- fix map barrier [done]
+- score system [done]
+- figure out transparent text background
+- main menu
+- add different powers
+- maybe add invisible border for player (barrier blocks guys)
+- make big bad guy shooting special beam cannon that you can see before he shoots [done]
+- top score [done]
+- winning screen [done]
+- add health packs [+]

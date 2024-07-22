@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import random
-
 import pygame
 
 from spacey.enemies.fighter import EnemyFighter
@@ -27,15 +25,13 @@ class Game:
         self.player = Player(self.screen)
         self.score = 0
         self.levels = load_levels(self.screen)
-        self.curr_level = 0
-        self.level = self.levels[self.curr_level]
+        self.level = next(self.levels)
         self.level.init()
         self.enemies: list[EnemyFighter] = self.level.enemies
         self.load_top_score()
 
     def next_level(self):
-        self.curr_level += 1
-        self.level = self.levels[self.curr_level]
+        self.level = next(self.levels)
         self.level.init()
         self.enemies = self.level.enemies
 
@@ -56,8 +52,6 @@ class Game:
             self.save_top_score()
             self.load_top_score()
             return
-        if self.won_the_game():
-            return
         self.player.update()
         for enemy in self.enemies:
             enemy.update()
@@ -69,9 +63,6 @@ class Game:
     def draw(self):
         if self.player.dead:
             self.show_top_score()
-            return
-        if self.won_the_game():
-            self.winning_screen()
             return
         self.screen.fill("gray")
         for i in range(self.level.tiles_horizontally):
@@ -91,8 +82,8 @@ class Game:
         pygame.display.flip()
         pygame.display.update()
 
-    def won_the_game(self):
-        return self.levels.index(self.level) == len(self.levels)
+    # def won_the_game(self):
+    #     return self.levels.index(self.level) == len(self.levels)
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -111,9 +102,9 @@ class Game:
             enemy.die_if_shot(self.player.bullets)
             if enemy.dead and enemy.finished_dying():
                 self.enemies.remove(enemy)
-                self.add_score(5)
+                self.add_score(enemy.score_for_killing)
 
-            self.player.lose_health_if_shot(enemy.bullets)
+            self.player.lose_health_if_shot(enemy.projectiles)
 
     def winning_screen(self):
         black = (0, 0, 0, 0)
@@ -154,9 +145,7 @@ class Game:
         font = pygame.font.Font("freesansbold.ttf", 128)
         font1 = pygame.font.Font("freesansbold.ttf", 64)
         text1 = font.render("You lose!", True, light_blue, black)
-        text = font1.render(
-            f"Current high score: {self.top_score}", True, light_blue, black
-        )
+        text = font1.render(f"Current high score: {self.top_score}", True, light_blue, black)
         textRect = text.get_rect()
         textRect1 = text1.get_rect()
         textRect1.center = (1920 // 2, 1080 // 2.1)

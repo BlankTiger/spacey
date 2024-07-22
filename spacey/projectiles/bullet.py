@@ -1,16 +1,11 @@
-from enum import Enum
-
 import pygame
 
+from spacey.direction import Direction
 from spacey.hitbox import Hitbox
 from spacey.position import Position
+from spacey.projectiles.projectile import Projectile
 from spacey.singleton import Singleton
 from spacey.spritesheet import Spritesheet
-
-
-class Direction(Enum):
-    Left = 1
-    Right = 2
 
 
 class BulletImages(metaclass=Singleton):
@@ -24,9 +19,10 @@ class BulletImages(metaclass=Singleton):
         self.images_right = [pygame.transform.rotate(image, 270) for image in self.images]
 
 
-class Bullet(pygame.sprite.Sprite):
+class Bullet(Projectile, pygame.sprite.Sprite):
     def __init__(self, x, y, direction, screen):
         super()
+        self.damage = 10
         self.pos = Position(x, y)
         self.screen = screen
         width = 32 * 2
