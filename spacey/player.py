@@ -29,7 +29,7 @@ class Health:
             self.health = 0
 
     def shot(self):
-        self.health -= 10
+        self.health -= 25
 
 
 class Player(pygame.sprite.Sprite):
@@ -100,8 +100,6 @@ class Player(pygame.sprite.Sprite):
         self.hitbox.update_pos(pos[0], pos[1])
 
     def sound(self):
-        pygame.mixer.pre_init()
-        pygame.mixer.init()
         self.death_sound = pygame.mixer.Sound("sounds/death2.mp3")
         self.shoot_sound = pygame.mixer.Sound("sounds/bullet.mp3")
         pygame.mixer.Sound.set_volume(self.death_sound, 0.3)
@@ -120,7 +118,6 @@ class Player(pygame.sprite.Sprite):
 
     def get_shot(self, bullets):
         if self.health.health <= 0:
-            print("You died")
             self.dead = True
             self.died_at = pygame.time.get_ticks()
             self.death_sfx()

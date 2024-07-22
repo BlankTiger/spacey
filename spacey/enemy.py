@@ -78,8 +78,6 @@ class Enemy(pygame.sprite.Sprite):
         return Position(self.pos.x + 65, self.pos.y + 64)
 
     def sound(self):
-        pygame.mixer.pre_init()
-        pygame.mixer.init()
         self.death_sound = pygame.mixer.Sound("sounds/kill.mp3")
         self.damage_sound = pygame.mixer.Sound("sounds/take_damage.mp3")
         self.shoot_sound = pygame.mixer.Sound("sounds/shoot2.mp3")
