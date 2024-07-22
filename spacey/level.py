@@ -41,9 +41,6 @@ def load_levels(screen):
     every_5th_level = {EnemyFighter: 8, Frank: 1}
     every_10th_level = {EnemyFighter: 10, Frank: 3}
     while True:
-        default_enemies = update_enemy_count(default_enemies)
-        every_5th_level = update_enemy_count(every_5th_level)
-        every_10th_level = update_enemy_count(every_10th_level)
         for i in range(1, 34):
             if i % 10 == 0:
                 yield Level(f"images/bgs/lvl{i}.png", screen, every_10th_level)
@@ -51,6 +48,10 @@ def load_levels(screen):
                 yield Level(f"images/bgs/lvl{i}.png", screen, every_5th_level)
             else:
                 yield Level(f"images/bgs/lvl{i}.png", screen, default_enemies)
+
+        default_enemies = update_enemy_count(default_enemies)
+        every_5th_level = update_enemy_count(every_5th_level)
+        every_10th_level = update_enemy_count(every_10th_level)
 
 
 def update_enemy_count(blueprint):
