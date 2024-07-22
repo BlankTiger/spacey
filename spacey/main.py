@@ -4,7 +4,7 @@ import random
 
 import pygame
 
-from spacey.enemy import EnemyFighter
+from spacey.enemies.fighter import EnemyFighter
 from spacey.level import load_levels
 from spacey.player import Player
 
@@ -57,7 +57,7 @@ class Game:
         for enemy in self.enemies:
             enemy.update()
         self.handle_shots()
-        self.level.scroll -= 10
+        self.level.scroll -= self.level.scroll_speed
         if abs(self.level.scroll) >= self.level.bg.get_width():
             self.level.scroll = 0
 

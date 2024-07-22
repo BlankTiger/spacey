@@ -3,7 +3,7 @@ import random
 
 import pygame
 
-from spacey.enemy import EnemyFighter
+from spacey.enemies.fighter import EnemyFighter
 
 
 class Level:
@@ -13,6 +13,7 @@ class Level:
         self.tiles_horizontally = math.ceil(1920 / self.bg.get_width()) + 2
         self.tiles_vertically = math.ceil(1080 / self.bg.get_height()) + 2
         self.scroll = 0
+        self.scroll_speed = random.randint(5, 50)
 
     def init(self):
         self.enemies = self.create_enemies(5)
