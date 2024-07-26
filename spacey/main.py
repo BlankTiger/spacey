@@ -126,10 +126,14 @@ class Game:
         self.score += amount
 
     def show_score(self):
-        black = (0, 0, 0, 255)
+        # black = (0, 0, 0, 150)
         light_blue = (0, 255, 255)
         font = pygame.font.Font("freesansbold.ttf", 64)
-        text = font.render(f"{self.score}", True, light_blue, black)
+        text = font.render(
+            f"{self.score}",
+            True,
+            light_blue,
+        )
         textRect = text.get_rect()
         textRect.center = (1800, 1080 // 12)
         self.screen.blit(text, textRect)
@@ -145,12 +149,20 @@ class Game:
             self.top_score = f.read()
 
     def show_top_score(self):
-        black = (0, 0, 0)
-        light_blue = (0, 255, 255)
+        # black = (0, 0, 0, 150)
+        light_blue = (0, 255, 255, 150)
         font = pygame.font.Font("freesansbold.ttf", 128)
         font1 = pygame.font.Font("freesansbold.ttf", 64)
-        text1 = font.render("You lose!", True, light_blue, black)
-        text = font1.render(f"Current high score: {self.top_score}", True, light_blue, black)
+        text1 = font.render(
+            "You lose!",
+            True,
+            light_blue,
+        )
+        text = font1.render(
+            f"Current high score: {self.top_score}",
+            True,
+            light_blue,
+        )
         textRect = text.get_rect()
         textRect1 = text1.get_rect()
         textRect1.center = (1920 // 2, 1080 // 2.1)
@@ -159,3 +171,16 @@ class Game:
         self.screen.blit(text1, textRect1)
         pygame.display.update()
         pygame.display.flip()
+
+    # def show_top_score(self):
+    #     self.black = (0, 0, 0, 150)
+    #     self.light_blue = (0, 255, 255, 150)
+    #     font = pygame.font.Font("freesansbold.ttf", 128)
+    #     text = font.render("You lose!", True, (0, 0, 0))
+    #     surface = pygame.Surface((100, 30))
+    #     surface.fill((255, 255, 255))
+    #     surface.blit(text, pygame.Rect(30, 0, 10, 100))
+    #     surface.set_alpha(50)
+    #     self.screen.blit(surface, pygame.Rect(30, 30, 10, 100))
+    #     pygame.display.update()
+    #     pygame.display.flip()
